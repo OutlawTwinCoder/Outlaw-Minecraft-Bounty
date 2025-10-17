@@ -6,6 +6,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 public class LocaleManager {
     private final BountyPlugin plugin;
@@ -23,7 +28,23 @@ public class LocaleManager {
         if (!file.exists()) {
             plugin.saveResource(filename, false);
         }
-        lang = YamlConfiguration.loadConfiguration(file);
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        try (InputStream in = plugin.getResource(filename)) {
+            if (in != null) {
+                YamlConfiguration defaults = YamlConfiguration.loadConfiguration(
+                        new InputStreamReader(in, StandardCharsets.UTF_8));
+                config.setDefaults(defaults);
+                config.options().copyDefaults(true);
+                try {
+                    config.save(file);
+                } catch (IOException ex) {
+                    plugin.getLogger().log(Level.WARNING, "Unable to persist updated locale defaults", ex);
+                }
+            }
+        } catch (IOException ex) {
+            plugin.getLogger().log(Level.WARNING, "Unable to read bundled locale defaults", ex);
+        }
+        lang = config;
     }
 
     public String tr(String path) {
