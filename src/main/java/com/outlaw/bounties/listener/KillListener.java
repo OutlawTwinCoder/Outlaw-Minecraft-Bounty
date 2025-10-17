@@ -29,5 +29,20 @@ public class KillListener implements Listener {
         if (targetPlayer != null) {
             targetPlayer.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.killed_monster"));
         }
+
+        var active = plugin.activeBountyManager().get(ownerId);
+        if (active == null) return;
+        var bounty = plugin.bountyManager().get(active.bountyId);
+        if (bounty == null || bounty.pointsReward <= 0) return;
+
+        int total = plugin.pointsManager().addPoints(ownerId, bounty.pointsReward);
+        if (targetPlayer != null) {
+            targetPlayer.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.points_awarded", java.util.Map.of(
+                    "points", String.valueOf(bounty.pointsReward)
+            )));
+            targetPlayer.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.points_balance", java.util.Map.of(
+                    "points", String.valueOf(total)
+            )));
+        }
     }
 }

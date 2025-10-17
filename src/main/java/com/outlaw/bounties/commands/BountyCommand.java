@@ -96,6 +96,7 @@ public class BountyCommand implements CommandExecutor {
                 plugin.locale().reload();
                 plugin.bountyManager().reload();
                 plugin.safeZoneManager().reload();
+                plugin.shopManager().reload();
                 sender.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.reloaded"));
             }
             case "open" -> {
