@@ -25,6 +25,8 @@ public class BountyPlugin extends JavaPlugin {
     private ActiveBountyManager activeBountyManager;
     private SpawnManager spawnManager;
     private GuiManager guiManager;
+    private SafeZoneSelectionManager safeZoneSelectionManager;
+    private SafeZoneVisualizer safeZoneVisualizer;
 
     private File zonesFile, dataFile, npcFile;
     private FileConfiguration zonesCfg, dataCfg, npcCfg;
@@ -45,11 +47,14 @@ public class BountyPlugin extends JavaPlugin {
         this.activeBountyManager = new ActiveBountyManager(this);
         this.spawnManager = new SpawnManager(this);
         this.guiManager = new GuiManager(this);
+        this.safeZoneSelectionManager = new SafeZoneSelectionManager(this);
+        this.safeZoneVisualizer = new SafeZoneVisualizer(this);
 
         // Listeners
         Bukkit.getPluginManager().registerEvents(new com.outlaw.bounties.listener.NPCListener(this), this);
         Bukkit.getPluginManager().registerEvents(new com.outlaw.bounties.listener.KillListener(this), this);
         Bukkit.getPluginManager().registerEvents(new GuiListener(), this);
+        Bukkit.getPluginManager().registerEvents(safeZoneSelectionManager, this);
 
         // Commands
         Objects.requireNonNull(getCommand("bounty")).setExecutor(new BountyCommand(this));
@@ -83,6 +88,8 @@ public class BountyPlugin extends JavaPlugin {
     public LocaleManager locale() { return locale; }
     public BountyManager bountyManager() { return bountyManager; }
     public SafeZoneManager safeZoneManager() { return safeZoneManager; }
+    public SafeZoneSelectionManager safeZoneSelectionManager() { return safeZoneSelectionManager; }
+    public SafeZoneVisualizer safeZoneVisualizer() { return safeZoneVisualizer; }
     public NPCManager npcManager() { return npcManager; }
     public ActiveBountyManager activeBountyManager() { return activeBountyManager; }
     public SpawnManager spawnManager() { return spawnManager; }
