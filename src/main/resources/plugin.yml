@@ -1,0 +1,21 @@
+name: OutlawBounties
+main: com.outlaw.bounties.BountyPlugin
+version: 1.0.1
+api-version: 1.21
+author: Outlaw
+commands:
+  bounty:
+    description: Admin commandes pour OutlawBounties
+    usage: /bounty <npc|safezone|reload|open>
+    permission: outlawbounties.admin
+  bountycomplete:
+    description: Compléter un bounty terminé et retourner au NPC
+    usage: /bountycomplete
+    permission: outlawbounties.use
+permissions:
+  outlawbounties.admin:
+    description: Accès aux commandes admin
+    default: op
+  outlawbounties.use:
+    description: Utiliser les bounties
+    default: true

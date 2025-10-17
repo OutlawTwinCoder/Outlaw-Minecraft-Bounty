@@ -1,0 +1,70 @@
+# OutlawBounties — configuration principale
+locale: fr        # 'fr' ou 'en'
+world: world      # monde ciblé pour les bounties (laisser 'world' par défaut)
+teleport:
+  ring_min: 36    # distance minimale pour téléporter le joueur autour du monstre
+  ring_max: 64    # distance maximale
+spawn:
+  max_attempts: 80
+  avoid_liquids: true
+  exclude_worlds: [world_nether, world_the_end]
+menu:
+  npc_name: "§6Bounty Master"
+  title_main: "&8Bounty Hunter"
+  title_bounties: "&8Choisir un Bounty"
+  title_loot: "&8Récompenses"
+bounties:
+  zombie_easy:
+    display: "Zombie Facile"
+    description: "Échauffement contre un zombie un peu plus costaud."
+    entity: ZOMBIE
+    health: 40.0
+    glowing_seconds: 12
+    equipment:
+      hand: IRON_SWORD
+      head: null
+      chest: null
+      legs: null
+      feet: null
+    rewards:
+      - item: IRON_INGOT
+        min: 3
+        max: 7
+        chance: 1.0
+      - item: GOLD_INGOT
+        min: 1
+        max: 4
+        chance: 0.6
+  skeleton_hunter:
+    display: "Squelette Chasseur"
+    description: "Reste en mouvement!"
+    entity: SKELETON
+    health: 30.0
+    glowing_seconds: 10
+    equipment:
+      hand: BOW
+      head: LEATHER_HELMET
+      chest: LEATHER_CHESTPLATE
+      legs: LEATHER_LEGGINGS
+      feet: LEATHER_BOOTS
+    rewards:
+      - item: BONE
+        min: 4
+        max: 10
+        chance: 1.0
+      - item: ARROW
+        min: 16
+        max: 32
+        chance: 0.9
+  enderman_test:
+    display: "Enderman Test"
+    description: "Ne le regarde pas dans les yeux..."
+    entity: ENDERMAN
+    health: 40.0
+    glowing_seconds: 8
+    equipment: {}
+    rewards:
+      - item: ENDER_PEARL
+        min: 2
+        max: 5
+        chance: 0.8
