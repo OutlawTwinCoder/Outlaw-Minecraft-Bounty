@@ -37,12 +37,15 @@ public class KillListener implements Listener {
 
         int total = plugin.pointsManager().addPoints(ownerId, bounty.pointsReward);
         if (targetPlayer != null) {
-            targetPlayer.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.points_awarded", java.util.Map.of(
-                    "points", String.valueOf(bounty.pointsReward)
-            )));
-            targetPlayer.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.points_balance", java.util.Map.of(
-                    "points", String.valueOf(total)
-            )));
+            java.util.Map<String, String> awardedVars = new java.util.HashMap<>();
+            awardedVars.put("points", String.valueOf(bounty.pointsReward));
+            awardedVars.put("total", String.valueOf(total));
+            targetPlayer.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.points_awarded", awardedVars));
+
+            java.util.Map<String, String> balanceVars = new java.util.HashMap<>();
+            balanceVars.put("points", String.valueOf(total));
+            balanceVars.put("total", String.valueOf(total));
+            targetPlayer.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.points_balance", balanceVars));
         }
     }
 }

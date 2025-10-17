@@ -32,8 +32,11 @@ public class MainMenuGui extends SimpleGui implements Listener {
         java.util.List<String> shopLore = new java.util.ArrayList<>();
         shopLore.add(org.bukkit.ChatColor.GRAY + lang.tr("gui.main_shop_desc"));
         shopLore.add("");
-        shopLore.add(org.bukkit.ChatColor.GOLD + lang.tr("gui.shop_points_hint", java.util.Map.of(
-                "points", String.valueOf(plugin.pointsManager().getPoints(player.getUniqueId())))));
+        int currentPoints = plugin.pointsManager().getPoints(player.getUniqueId());
+        java.util.Map<String, String> shopVars = new java.util.HashMap<>();
+        shopVars.put("points", String.valueOf(currentPoints));
+        shopVars.put("total", String.valueOf(currentPoints));
+        shopLore.add(org.bukkit.ChatColor.GOLD + lang.tr("gui.shop_points_hint", shopVars));
         inv.setItem(13, withMeta(new ItemStack(Material.EMERALD), lang.tr("gui.main_shop"), shopLore));
 
         java.util.List<String> lootLore = new java.util.ArrayList<>();

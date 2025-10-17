@@ -112,8 +112,15 @@ public class ActiveBountyManager {
             return;
         }
 
+        p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.teleport_countdown_start", java.util.Map.of(
+                "seconds", String.valueOf(countdown)
+        )));
+        p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", java.util.Map.of(
+                "seconds", String.valueOf(countdown)
+        )));
+
         new BukkitRunnable() {
-            int seconds = countdown;
+            int seconds = countdown - 1;
 
             @Override
             public void run() {
@@ -129,12 +136,12 @@ public class ActiveBountyManager {
                     return;
                 }
 
-                p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.teleport_countdown", java.util.Map.of(
+                p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", java.util.Map.of(
                         "seconds", String.valueOf(seconds)
                 )));
                 seconds--;
             }
-        }.runTaskTimer(plugin, 0L, 20L);
+        }.runTaskTimer(plugin, 20L, 20L);
     }
 
     private void teleportNear(Player p, org.bukkit.Location center) {

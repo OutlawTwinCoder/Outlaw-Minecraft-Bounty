@@ -42,8 +42,11 @@ public class ShopGui extends SimpleGui implements Listener {
     public void init(Inventory inv) {
         order.clear();
         int points = plugin.pointsManager().getPoints(player.getUniqueId());
+        Map<String, String> balanceVars = new java.util.HashMap<>();
+        balanceVars.put("points", String.valueOf(points));
+        balanceVars.put("total", String.valueOf(points));
         ItemStack indicator = withMeta(new ItemStack(Material.SUNFLOWER),
-                ChatColor.GOLD + plugin.locale().tr("gui.shop_points", Map.of("points", String.valueOf(points))),
+                ChatColor.GOLD + plugin.locale().tr("gui.shop_points", balanceVars),
                 lore(plugin.locale().tr("gui.shop_points_lore")));
         inv.setItem(4, indicator);
 
@@ -58,10 +61,13 @@ public class ShopGui extends SimpleGui implements Listener {
                 }
                 lore.add("");
             }
-            lore.add(ChatColor.GOLD + plugin.locale().tr("gui.shop_cost", Map.of("cost", String.valueOf(offer.cost))));
-            lore.add(ChatColor.YELLOW + plugin.locale().tr("gui.shop_reward", Map.of(
-                    "amount", String.valueOf(offer.rewardAmount),
-                    "item", formatMaterial(offer.rewardItem))));
+            Map<String, String> costVars = new java.util.HashMap<>();
+            costVars.put("cost", String.valueOf(offer.cost));
+            lore.add(ChatColor.GOLD + plugin.locale().tr("gui.shop_cost", costVars));
+            Map<String, String> rewardVars = new java.util.HashMap<>();
+            rewardVars.put("amount", String.valueOf(offer.rewardAmount));
+            rewardVars.put("item", formatMaterial(offer.rewardItem));
+            lore.add(ChatColor.YELLOW + plugin.locale().tr("gui.shop_reward", rewardVars));
             inv.setItem(slot, withMeta(icon, "§e" + offer.display, lore));
             slot++;
             if ((slot + 1) % 9 == 0) {
@@ -129,12 +135,15 @@ public class ShopGui extends SimpleGui implements Listener {
             overflow.values().forEach(item -> p.getWorld().dropItemNaturally(p.getLocation(), item));
         }
 
-        p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.shop_purchased", Map.of(
-                "name", offer.display,
-                "cost", String.valueOf(cost))));
+        java.util.Map<String, String> purchaseVars = new java.util.HashMap<>();
+        purchaseVars.put("name", offer.display);
+        purchaseVars.put("cost", String.valueOf(cost));
+        p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.shop_purchased", purchaseVars));
         int balance = plugin.pointsManager().getPoints(playerId);
-        p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.points_balance", Map.of(
-                "points", String.valueOf(balance))));
+        java.util.Map<String, String> balanceMsgVars = new java.util.HashMap<>();
+        balanceMsgVars.put("points", String.valueOf(balance));
+        balanceMsgVars.put("total", String.valueOf(balance));
+        p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.points_balance", balanceMsgVars));
 
         plugin.guiManager().openShop(p);
     }
