@@ -12,6 +12,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -99,8 +100,48 @@ public class ActiveBountyManager {
         registerMob(mob.getUniqueId(), p.getUniqueId());
         persist();
 
-        teleportNear(p, spawnLoc);
+        scheduleTeleport(p, spawnLoc);
         return true;
+    }
+
+    private void scheduleTeleport(Player p, org.bukkit.Location spawnLoc) {
+        int countdown = Math.max(0, plugin.getConfig().getInt("teleport.countdown_seconds", 3));
+        if (countdown <= 0) {
+            p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.teleport_now"));
+            teleportNear(p, spawnLoc);
+            return;
+        }
+
+        p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.teleport_countdown_start", java.util.Map.of(
+                "seconds", String.valueOf(countdown)
+        )));
+        p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", java.util.Map.of(
+                "seconds", String.valueOf(countdown)
+        )));
+
+        new BukkitRunnable() {
+            int seconds = countdown - 1;
+
+            @Override
+            public void run() {
+                if (!p.isOnline()) {
+                    cancel();
+                    return;
+                }
+
+                if (seconds <= 0) {
+                    p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.teleport_now"));
+                    teleportNear(p, spawnLoc);
+                    cancel();
+                    return;
+                }
+
+                p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", java.util.Map.of(
+                        "seconds", String.valueOf(seconds)
+                )));
+                seconds--;
+            }
+        }.runTaskTimer(plugin, 20L, 20L);
     }
 
     private void teleportNear(Player p, org.bukkit.Location center) {
@@ -144,7 +185,6 @@ public class ActiveBountyManager {
 
     private void persist() {
         var cfg = plugin.dataCfg();
-        var root = new java.util.HashMap<String, Object>();
         var players = new java.util.HashMap<String, Object>();
         for (var e : active.entrySet()) {
             var ab = e.getValue();
@@ -161,9 +201,7 @@ public class ActiveBountyManager {
             }
             players.put(e.getKey().toString(), map);
         }
-        root.put("players", players);
-        for (var k : new java.util.ArrayList<>(cfg.getKeys(false))) cfg.set(k, null);
-        for (var k : root.keySet()) cfg.set(k, root.get(k));
+        cfg.set("players", players);
         plugin.saveData();
     }
 }

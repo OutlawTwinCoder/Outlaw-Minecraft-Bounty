@@ -56,8 +56,6 @@ public class SafeZoneVisualizer {
     private void visualizeCuboid(Player player, SafeZoneManager.Zone zone, Map<BlockKey, BlockData> original) {
         if (zone.anchors.size() < 2) return;
         int y = zone.anchors.get(0).y;
-        highlightAnchorBlocks(player, zone, original);
-
         for (int x = zone.minX; x <= zone.maxX; x++) {
             sendBlock(player, original, zone.world, x, y, zone.minZ, Material.GLOWSTONE.createBlockData());
             sendBlock(player, original, zone.world, x, y, zone.maxZ, Material.GLOWSTONE.createBlockData());
@@ -71,7 +69,6 @@ public class SafeZoneVisualizer {
     private void visualizePolygon(Player player, SafeZoneManager.Zone zone, Map<BlockKey, BlockData> original) {
         if (zone.anchors.isEmpty()) return;
         int y = zone.anchors.get(0).y;
-        highlightAnchorBlocks(player, zone, original);
         List<SafeZoneManager.BlockPos> anchors = zone.anchors;
         for (int i = 0; i < anchors.size(); i++) {
             SafeZoneManager.BlockPos a = anchors.get(i);
@@ -89,13 +86,7 @@ public class SafeZoneVisualizer {
             int z = (int) Math.floor(center.getBlockZ() + Math.sin(rad) * radius);
             sendBlock(player, original, zone.world, x, center.getBlockY(), z, Material.GLOWSTONE.createBlockData());
         }
-        sendBlock(player, original, zone.world, center.getBlockX(), center.getBlockY(), center.getBlockZ(), Material.GOLD_BLOCK.createBlockData());
-    }
-
-    private void highlightAnchorBlocks(Player player, SafeZoneManager.Zone zone, Map<BlockKey, BlockData> original) {
-        for (SafeZoneManager.BlockPos anchor : zone.anchors) {
-            sendBlock(player, original, zone.world, anchor.x, anchor.y, anchor.z, Material.GOLD_BLOCK.createBlockData());
-        }
+        // Keep the outline clean without highlighting the center block to avoid confusing markers.
     }
 
     private void drawLine(Player player, Map<BlockKey, BlockData> original, String worldName, int x0, int z0, int x1, int z1, int y, BlockData data) {

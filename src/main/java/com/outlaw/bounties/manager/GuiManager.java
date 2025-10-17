@@ -4,6 +4,7 @@ import com.outlaw.bounties.BountyPlugin;
 import com.outlaw.bounties.gui.MainMenuGui;
 import com.outlaw.bounties.gui.BountiesGui;
 import com.outlaw.bounties.gui.LootGui;
+import com.outlaw.bounties.gui.ShopGui;
 import org.bukkit.entity.Player;
 
 public class GuiManager {
@@ -13,7 +14,8 @@ public class GuiManager {
         this.plugin = plugin;
     }
 
-    public void openMain(Player p) { p.openInventory(new MainMenuGui(plugin).create()); }
+    public void openMain(Player p) { p.openInventory(new MainMenuGui(plugin, p).create()); }
     public void openBounties(Player p) { p.openInventory(new BountiesGui(plugin, p).create()); }
     public void openLoot(Player p) { p.openInventory(new LootGui(plugin, p).create()); }
+    public void openShop(Player p) { p.openInventory(new ShopGui(plugin, p).create()); }
 }

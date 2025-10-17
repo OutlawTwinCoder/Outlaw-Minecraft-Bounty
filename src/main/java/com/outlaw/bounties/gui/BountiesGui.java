@@ -31,12 +31,21 @@ public class BountiesGui extends SimpleGui implements Listener {
 
     @Override
     public void init(Inventory inv) {
+        order.clear();
         int slot = 10;
         for (Bounty b : plugin.bountyManager().all()) {
             order.add(b.id);
             ItemStack it = new ItemStack(Material.CROSSBOW);
             java.util.List<String> l = new java.util.ArrayList<>();
-            l.add(ChatColor.GRAY + b.description);
+            if (b.description != null && !b.description.isEmpty()) {
+                for (String line : b.description.split("\\n")) {
+                    l.add(ChatColor.GRAY + line);
+                }
+                l.add("");
+            }
+            l.add(ChatColor.GOLD + plugin.locale().tr("gui.bounty_points", java.util.Map.of(
+                    "points", String.valueOf(Math.max(0, b.pointsReward))
+            )));
             l.add("");
             l.add(ChatColor.YELLOW + "» " + plugin.locale().tr("gui.start"));
             inv.setItem(slot, withMeta(it, "§e" + b.display, l));
@@ -65,6 +74,7 @@ public class BountiesGui extends SimpleGui implements Listener {
             i++; s++; if ((s+1)%9 == 0) s += 2;
         }
         if (idx >= 0) {
+            p.closeInventory();
             if (plugin.activeBountyManager().hasActive(p.getUniqueId())) {
                 p.sendMessage(ChatColor.RED + plugin.locale().tr("messages.already_active"));
                 return;
@@ -75,7 +85,6 @@ public class BountiesGui extends SimpleGui implements Listener {
             boolean ok = plugin.activeBountyManager().startBounty(p, b);
             if (ok) {
                 p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.bounty_started", java.util.Map.of("name", b.display)));
-                p.closeInventory();
             } else {
                 p.sendMessage(ChatColor.RED + "Impossible de démarrer ce bounty pour le moment.");
             }
