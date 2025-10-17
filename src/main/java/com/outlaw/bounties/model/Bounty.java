@@ -13,4 +13,5 @@ public class Bounty {
     public int glowingSeconds;
     public String hand, head, chest, legs, feet;
     public List<LootReward> rewards = new ArrayList<>();
+    public int points;
 }

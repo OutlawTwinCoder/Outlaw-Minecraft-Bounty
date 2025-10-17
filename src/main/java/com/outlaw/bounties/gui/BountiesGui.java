@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,6 +32,7 @@ public class BountiesGui extends SimpleGui implements Listener {
 
     @Override
     public void init(Inventory inv) {
+        order.clear();
         int slot = 10;
         for (Bounty b : plugin.bountyManager().all()) {
             order.add(b.id);
@@ -72,13 +74,36 @@ public class BountiesGui extends SimpleGui implements Listener {
             String id = order.get(idx);
             var b = plugin.bountyManager().get(id);
             if (b == null) return;
-            boolean ok = plugin.activeBountyManager().startBounty(p, b);
-            if (ok) {
+            Location spawnLoc = plugin.activeBountyManager().startBounty(p, b);
+            if (spawnLoc != null) {
                 p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.bounty_started", java.util.Map.of("name", b.display)));
                 p.closeInventory();
+                beginTeleportCountdown(p, spawnLoc);
             } else {
                 p.sendMessage(ChatColor.RED + "Impossible de démarrer ce bounty pour le moment.");
             }
         }
+    }
+
+    private void beginTeleportCountdown(Player p, Location spawnLoc) {
+        new org.bukkit.scheduler.BukkitRunnable() {
+            private int seconds = 3;
+
+            @Override
+            public void run() {
+                if (!p.isOnline()) {
+                    cancel();
+                    return;
+                }
+                if (seconds > 0) {
+                    p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", java.util.Map.of("seconds", String.valueOf(seconds))));
+                    seconds--;
+                } else {
+                    p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.teleport_now"));
+                    plugin.activeBountyManager().teleportNear(p, spawnLoc);
+                    cancel();
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
     }
 }

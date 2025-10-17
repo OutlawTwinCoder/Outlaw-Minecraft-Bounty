@@ -4,6 +4,8 @@ world: world      # monde ciblé pour les bounties (laisser 'world' par défaut)
 teleport:
   ring_min: 36    # distance minimale pour téléporter le joueur autour du monstre
   ring_max: 64    # distance maximale
+points:
+  default_reward: 12
 spawn:
   max_attempts: 80
   avoid_liquids: true
@@ -13,6 +15,7 @@ menu:
   title_main: "&8Bounty Hunter"
   title_bounties: "&8Choisir un Bounty"
   title_loot: "&8Récompenses"
+  title_shop: "&8Boutique Bounty"
 bounties:
   zombie_easy:
     display: "Zombie Facile"
@@ -20,6 +23,7 @@ bounties:
     entity: ZOMBIE
     health: 40.0
     glowing_seconds: 12
+    points: 10
     equipment:
       hand: IRON_SWORD
       head: null
@@ -41,6 +45,7 @@ bounties:
     entity: SKELETON
     health: 30.0
     glowing_seconds: 10
+    points: 12
     equipment:
       hand: BOW
       head: LEATHER_HELMET
@@ -62,9 +67,94 @@ bounties:
     entity: ENDERMAN
     health: 40.0
     glowing_seconds: 8
+    points: 18
     equipment: {}
     rewards:
       - item: ENDER_PEARL
         min: 2
         max: 5
         chance: 0.8
+  spider_ambush:
+    display: "Araignée Embusquée"
+    description: "Une araignée rapide accompagnée de ses toiles."
+    entity: SPIDER
+    health: 32.0
+    glowing_seconds: 10
+    points: 14
+    equipment: {}
+    rewards:
+      - item: STRING
+        min: 6
+        max: 12
+        chance: 1.0
+      - item: SPIDER_EYE
+        min: 1
+        max: 3
+        chance: 0.6
+  witch_hex:
+    display: "Sorcière Maudite"
+    description: "Attention à ses potions explosives!"
+    entity: WITCH
+    health: 32.0
+    glowing_seconds: 14
+    points: 20
+    equipment: {}
+    rewards:
+      - item: GLOWSTONE_DUST
+        min: 4
+        max: 8
+        chance: 0.75
+      - item: REDSTONE
+        min: 6
+        max: 12
+        chance: 0.85
+  pillager_captain:
+    display: "Capitaine Pillard"
+    description: "Un chef lourdement armé et dangereux."
+    entity: PILLAGER
+    health: 45.0
+    glowing_seconds: 16
+    points: 25
+    equipment:
+      hand: CROSSBOW
+      head: IRON_HELMET
+      chest: CHAINMAIL_CHESTPLATE
+      legs: CHAINMAIL_LEGGINGS
+      feet: CHAINMAIL_BOOTS
+    rewards:
+      - item: EMERALD
+        min: 2
+        max: 5
+        chance: 0.9
+      - item: CROSSBOW
+        min: 1
+        max: 1
+        chance: 0.35
+shop:
+  items:
+    golden_apples:
+      display: "Pack de pommes dorées"
+      description:
+        - "Idéal pour survivre aux combats."
+      icon: GOLDEN_APPLE
+      reward:
+        item: GOLDEN_APPLE
+        amount: 4
+      cost: 30
+    strength_boost:
+      display: "Potions de force"
+      description:
+        - "Donne un bonus offensif temporaire."
+      icon: SPLASH_POTION
+      commands:
+        - "give %player% minecraft:potion{Potion:\"minecraft:strong_strength\"} 2"
+      cost: 45
+    totem_bundle:
+      display: "Lot de Totems"
+      description:
+        - "Sécurise tes missions les plus difficiles."
+      icon: TOTEM_OF_UNDYING
+      reward:
+        item: TOTEM_OF_UNDYING
+        amount: 1
+      cost: 70

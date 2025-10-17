@@ -18,6 +18,7 @@ import java.util.*;
 public class ActiveBountyManager {
     private final BountyPlugin plugin;
     private final Map<java.util.UUID, ActiveBounty> active = new HashMap<>();
+    private final Map<java.util.UUID, java.util.UUID> mobToPlayer = new HashMap<>();
 
     public static final String MOB_TAG_PREFIX = "OBOUNTY_";
 
@@ -28,20 +29,45 @@ public class ActiveBountyManager {
     public ActiveBounty get(java.util.UUID player) { return active.get(player); }
     public boolean hasActive(java.util.UUID player) { return active.containsKey(player); }
     public java.util.Collection<ActiveBounty> all() { return active.values(); }
-    public void clear(java.util.UUID player) { active.remove(player); persist(); }
+    public void clear(java.util.UUID player) {
+        var ab = active.remove(player);
+        if (ab != null && ab.mobUUID != null) {
+            mobToPlayer.remove(ab.mobUUID);
+            ab.mobUUID = null;
+        }
+        persist();
+    }
     public void markKilled(java.util.UUID player) {
         var ab = active.get(player);
-        if (ab != null) { ab.state = ActiveBounty.State.KILLED; persist(); }
+        if (ab != null) {
+            if (ab.mobUUID != null) {
+                mobToPlayer.remove(ab.mobUUID);
+                ab.mobUUID = null;
+            }
+            ab.state = ActiveBounty.State.KILLED;
+            persist();
+        }
     }
     public void markClaimed(java.util.UUID player) {
         var ab = active.get(player);
-        if (ab != null) { ab.state = ActiveBounty.State.CLAIMED; persist(); }
+        if (ab != null) {
+            if (ab.mobUUID != null) {
+                mobToPlayer.remove(ab.mobUUID);
+                ab.mobUUID = null;
+            }
+            ab.state = ActiveBounty.State.CLAIMED;
+            persist();
+        }
     }
 
-    public boolean startBounty(Player p, Bounty b) {
-        if (hasActive(p.getUniqueId())) return false;
+    public java.util.UUID getPlayerForMob(java.util.UUID mob) { return mobToPlayer.get(mob); }
+
+    private void registerMob(java.util.UUID mob, java.util.UUID player) { mobToPlayer.put(mob, player); }
+
+    public org.bukkit.Location startBounty(Player p, Bounty b) {
+        if (hasActive(p.getUniqueId())) return null;
         var spawnLoc = plugin.spawnManager().pickRandomSpawn(plugin.getTargetWorld());
-        if (spawnLoc == null) return false;
+        if (spawnLoc == null) return null;
 
         LivingEntity mob = (LivingEntity) spawnLoc.getWorld().spawnEntity(spawnLoc, b.entityType, CreatureSpawnEvent.SpawnReason.CUSTOM);
         mob.setRemoveWhenFarAway(false);
@@ -70,13 +96,13 @@ public class ActiveBountyManager {
         ab.state = ActiveBounty.State.STARTED;
 
         active.put(p.getUniqueId(), ab);
+        registerMob(mob.getUniqueId(), p.getUniqueId());
         persist();
 
-        teleportNear(p, spawnLoc);
-        return true;
+        return spawnLoc;
     }
 
-    private void teleportNear(Player p, org.bukkit.Location center) {
+    public void teleportNear(Player p, org.bukkit.Location center) {
         int min = plugin.getConfig().getInt("teleport.ring_min", 36);
         int max = plugin.getConfig().getInt("teleport.ring_max", 64);
         double r = min + (Math.random() * (max - min));
@@ -117,7 +143,6 @@ public class ActiveBountyManager {
 
     private void persist() {
         var cfg = plugin.dataCfg();
-        var root = new java.util.HashMap<String, Object>();
         var players = new java.util.HashMap<String, Object>();
         for (var e : active.entrySet()) {
             var ab = e.getValue();
@@ -134,9 +159,7 @@ public class ActiveBountyManager {
             }
             players.put(e.getKey().toString(), map);
         }
-        root.put("players", players);
-        for (var k : new java.util.ArrayList<>(cfg.getKeys(false))) cfg.set(k, null);
-        for (var k : root.keySet()) cfg.set(k, root.get(k));
+        cfg.set("players", players);
         plugin.saveData();
     }
 }

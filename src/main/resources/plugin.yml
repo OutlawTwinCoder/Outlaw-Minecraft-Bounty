@@ -6,7 +6,7 @@ author: Outlaw
 commands:
   bounty:
     description: Admin commandes pour OutlawBounties
-    usage: /bounty <npc|safezone|reload|open>
+    usage: /bounty <npc|create|safezone|show|reload|open>
     permission: outlawbounties.admin
   bountycomplete:
     description: Compléter un bounty terminé et retourner au NPC

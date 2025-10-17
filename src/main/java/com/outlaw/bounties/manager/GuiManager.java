@@ -13,7 +13,8 @@ public class GuiManager {
         this.plugin = plugin;
     }
 
-    public void openMain(Player p) { p.openInventory(new MainMenuGui(plugin).create()); }
+    public void openMain(Player p) { p.openInventory(new MainMenuGui(plugin, p).create()); }
     public void openBounties(Player p) { p.openInventory(new BountiesGui(plugin, p).create()); }
     public void openLoot(Player p) { p.openInventory(new LootGui(plugin, p).create()); }
+    public void openShop(Player p) { p.openInventory(new com.outlaw.bounties.gui.BountyShopGui(plugin, p).create()); }
 }
