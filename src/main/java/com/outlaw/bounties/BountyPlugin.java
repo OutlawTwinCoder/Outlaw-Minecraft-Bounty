@@ -27,6 +27,8 @@ public class BountyPlugin extends JavaPlugin {
     private GuiManager guiManager;
     private SafeZoneSelectionManager safeZoneSelectionManager;
     private SafeZoneVisualizer safeZoneVisualizer;
+    private PointsManager pointsManager;
+    private ShopManager shopManager;
 
     private File zonesFile, dataFile, npcFile;
     private FileConfiguration zonesCfg, dataCfg, npcCfg;
@@ -44,6 +46,8 @@ public class BountyPlugin extends JavaPlugin {
         this.bountyManager = new BountyManager(this);
         this.safeZoneManager = new SafeZoneManager(this);
         this.npcManager = new NPCManager(this);
+        this.pointsManager = new PointsManager(this);
+        this.shopManager = new ShopManager(this);
         this.activeBountyManager = new ActiveBountyManager(this);
         this.spawnManager = new SpawnManager(this);
         this.guiManager = new GuiManager(this);
@@ -94,6 +98,8 @@ public class BountyPlugin extends JavaPlugin {
     public ActiveBountyManager activeBountyManager() { return activeBountyManager; }
     public SpawnManager spawnManager() { return spawnManager; }
     public GuiManager guiManager() { return guiManager; }
+    public PointsManager pointsManager() { return pointsManager; }
+    public ShopManager shopManager() { return shopManager; }
 
     public FileConfiguration zonesCfg() { return zonesCfg; }
     public FileConfiguration dataCfg() { return dataCfg; }

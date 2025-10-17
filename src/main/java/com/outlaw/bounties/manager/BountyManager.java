@@ -31,6 +31,7 @@ public class BountyManager {
             bo.entityType = EntityType.valueOf(b.getString("entity", "ZOMBIE").toUpperCase(Locale.ROOT));
             bo.health = b.getDouble("health", 20.0);
             bo.glowingSeconds = b.getInt("glowing_seconds", 10);
+            bo.pointsReward = b.getInt("points_reward", 1);
             var eq = b.getConfigurationSection("equipment");
             if (eq != null) {
                 bo.hand  = eq.getString("hand", null);
