@@ -47,11 +47,34 @@ public class LocaleManager {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 
-    public String tr(String path, java.util.Map<String, String> vars) {
+    public String tr(String path, java.util.Map<String, ?> vars) {
         String s = tr(path);
+        if (vars == null || vars.isEmpty()) {
+            return s;
+        }
         for (var e : vars.entrySet()) {
-            s = s.replace("%" + e.getKey() + "%", e.getValue());
+            if (e.getKey() == null) {
+                continue;
+            }
+            String value = e.getValue() != null ? String.valueOf(e.getValue()) : "";
+            s = s.replace("%" + e.getKey() + "%", value);
         }
         return s;
+    }
+
+    public String tr(String path, Object... keyValues) {
+        if (keyValues == null || keyValues.length == 0) {
+            return tr(path);
+        }
+        java.util.Map<String, String> map = new java.util.HashMap<>();
+        for (int i = 0; i + 1 < keyValues.length; i += 2) {
+            Object key = keyValues[i];
+            Object value = keyValues[i + 1];
+            if (key == null) {
+                continue;
+            }
+            map.put(String.valueOf(key), value != null ? String.valueOf(value) : "");
+        }
+        return tr(path, map);
     }
 }

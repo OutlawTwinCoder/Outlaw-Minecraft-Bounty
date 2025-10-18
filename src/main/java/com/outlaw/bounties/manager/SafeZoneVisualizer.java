@@ -46,9 +46,7 @@ public class SafeZoneVisualizer {
             return;
         }
 
-        player.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.safezone_show_started", Map.of(
-                "count", String.valueOf(displayed)
-        )));
+        player.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.safezone_show_started", "count", displayed));
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> revert(player, original), SHOW_DURATION_TICKS);
     }

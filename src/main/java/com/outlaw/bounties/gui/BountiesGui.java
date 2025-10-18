@@ -44,12 +44,10 @@ public class BountiesGui extends SimpleGui implements Listener {
                 l.add("");
             }
             if (b.tierDisplay != null && !b.tierDisplay.isEmpty()) {
-                l.add(ChatColor.AQUA + plugin.locale().tr("gui.bounty_tier", java.util.Map.of("tier", b.tierDisplay)));
+                l.add(ChatColor.AQUA + plugin.locale().tr("gui.bounty_tier", "tier", b.tierDisplay));
                 l.add("");
             }
-            l.add(ChatColor.GOLD + plugin.locale().tr("gui.bounty_points", java.util.Map.of(
-                    "points", String.valueOf(Math.max(0, b.pointsReward))
-            )));
+            l.add(ChatColor.GOLD + plugin.locale().tr("gui.bounty_points", "points", Math.max(0, b.pointsReward)));
             l.add("");
             l.add(ChatColor.YELLOW + "» " + plugin.locale().tr("gui.start"));
             inv.setItem(slot, withMeta(it, "§e" + b.display, l));
@@ -88,7 +86,7 @@ public class BountiesGui extends SimpleGui implements Listener {
             if (b == null) return;
             boolean ok = plugin.activeBountyManager().startBounty(p, b);
             if (ok) {
-                p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.bounty_started", java.util.Map.of("name", b.display)));
+                p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.bounty_started", "name", b.display));
             } else {
                 p.sendMessage(ChatColor.RED + "Impossible de démarrer ce bounty pour le moment.");
             }

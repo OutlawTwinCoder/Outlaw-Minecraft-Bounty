@@ -128,12 +128,8 @@ public class ActiveBountyManager {
             return;
         }
 
-        p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.teleport_countdown_start", java.util.Map.of(
-                "seconds", String.valueOf(countdown)
-        )));
-        p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", java.util.Map.of(
-                "seconds", String.valueOf(countdown)
-        )));
+        p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.teleport_countdown_start", "seconds", countdown));
+        p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", "seconds", countdown));
 
         new BukkitRunnable() {
             int seconds = countdown - 1;
@@ -152,9 +148,7 @@ public class ActiveBountyManager {
                     return;
                 }
 
-                p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", java.util.Map.of(
-                        "seconds", String.valueOf(seconds)
-                )));
+                p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.teleport_countdown", "seconds", seconds));
                 seconds--;
             }
         }.runTaskTimer(plugin, 20L, 20L);

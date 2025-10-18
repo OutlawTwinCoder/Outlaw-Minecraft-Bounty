@@ -43,11 +43,8 @@ public class ShopGui extends SimpleGui implements Listener {
     public void init(Inventory inv) {
         order.clear();
         int points = plugin.pointsManager().getPoints(player.getUniqueId());
-        Map<String, String> balanceVars = new java.util.HashMap<>();
-        balanceVars.put("points", String.valueOf(points));
-        balanceVars.put("total", String.valueOf(points));
         ItemStack indicator = withMeta(new ItemStack(Material.SUNFLOWER),
-                ChatColor.GOLD + plugin.locale().tr("gui.shop_points", balanceVars),
+                ChatColor.GOLD + plugin.locale().tr("gui.shop_points", "points", points, "total", points),
                 lore(plugin.locale().tr("gui.shop_points_lore")));
         inv.setItem(4, indicator);
 
@@ -69,7 +66,7 @@ public class ShopGui extends SimpleGui implements Listener {
                     String tierName = tier.displayName != null
                             ? ChatColor.translateAlternateColorCodes('&', tier.displayName)
                             : tier.id;
-                    lore.add(ChatColor.AQUA + plugin.locale().tr("gui.shop_tier", Map.of("tier", tierName)));
+                    lore.add(ChatColor.AQUA + plugin.locale().tr("gui.shop_tier", "tier", tierName));
                     if (tier.description != null && !tier.description.isEmpty()) {
                         lore.add(ChatColor.DARK_AQUA + ChatColor.translateAlternateColorCodes('&', tier.description));
                     }
@@ -77,14 +74,13 @@ public class ShopGui extends SimpleGui implements Listener {
                 }
             }
 
-            Map<String, String> costVars = new java.util.HashMap<>();
-            costVars.put("cost", String.valueOf(offer.cost));
-            lore.add(ChatColor.GOLD + plugin.locale().tr("gui.shop_cost", costVars));
+            lore.add(ChatColor.GOLD + plugin.locale().tr("gui.shop_cost", "cost", offer.cost));
 
-            Map<String, String> rewardVars = new java.util.HashMap<>();
-            rewardVars.put("amount", String.valueOf(Math.max(1, offer.rewardAmount)));
-            rewardVars.put("item", ChatColor.stripColor(offer.reward.formattedName()));
-            lore.add(ChatColor.YELLOW + plugin.locale().tr("gui.shop_reward", rewardVars));
+            lore.add(ChatColor.YELLOW + plugin.locale().tr(
+                    "gui.shop_reward",
+                    "amount", Math.max(1, offer.rewardAmount),
+                    "item", ChatColor.stripColor(offer.reward.formattedName())
+            ));
 
             ItemStack preview = offer.reward.createStack(Math.min(Math.max(1, offer.rewardAmount), offer.reward.prototype().getMaxStackSize()));
             if (preview.hasItemMeta() && preview.getItemMeta().hasLore()) {
@@ -150,15 +146,9 @@ public class ShopGui extends SimpleGui implements Listener {
 
         giveReward(p, offer);
 
-        java.util.Map<String, String> purchaseVars = new java.util.HashMap<>();
-        purchaseVars.put("name", offer.display);
-        purchaseVars.put("cost", String.valueOf(cost));
-        p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.shop_purchased", purchaseVars));
+        p.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.shop_purchased", "name", offer.display, "cost", cost));
         int balance = plugin.pointsManager().getPoints(playerId);
-        java.util.Map<String, String> balanceMsgVars = new java.util.HashMap<>();
-        balanceMsgVars.put("points", String.valueOf(balance));
-        balanceMsgVars.put("total", String.valueOf(balance));
-        p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.points_balance", balanceMsgVars));
+        p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.points_balance", "points", balance, "total", balance));
 
         plugin.guiManager().openShop(p);
     }
