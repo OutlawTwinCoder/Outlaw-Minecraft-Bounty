@@ -1,7 +1,5 @@
 package com.outlaw.bounties.util;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import com.outlaw.bounties.BountyPlugin;
 import com.outlaw.bounties.item.ConfiguredItem;
 import org.bukkit.*;
@@ -24,7 +22,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -317,13 +317,27 @@ public final class ItemParser {
         if (texture == null || texture.isEmpty()) {
             return;
         }
-        GameProfile profile = new GameProfile(UUID.randomUUID(), "custom-head");
-        profile.getProperties().put("textures", new Property("textures", texture));
         try {
+            Class<?> gameProfileClass = Class.forName("com.mojang.authlib.GameProfile");
+            Class<?> propertyClass = Class.forName("com.mojang.authlib.properties.Property");
+            Constructor<?> profileConstructor = gameProfileClass.getConstructor(UUID.class, String.class);
+            Object profile = profileConstructor.newInstance(UUID.randomUUID(), "custom-head");
+
+            Method getProperties = gameProfileClass.getMethod("getProperties");
+            Object propertyMap = getProperties.invoke(profile);
+            Method putMethod = propertyMap.getClass().getMethod("put", Object.class, Object.class);
+
+            Constructor<?> propertyConstructor = propertyClass.getConstructor(String.class, String.class);
+            Object property = propertyConstructor.newInstance("textures", texture);
+            putMethod.invoke(propertyMap, "textures", property);
+
             Field profileField = meta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             profileField.set(meta, profile);
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+        } catch (ClassNotFoundException ignored) {
+            // Server implementation does not expose authlib classes; ignore silently.
+        } catch (ReflectiveOperationException ignored) {
+            // Failed to apply the custom texture; ignore to keep compatibility.
         }
     }
 
