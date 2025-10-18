@@ -1,10 +1,10 @@
 package com.outlaw.bounties.manager;
 
 import com.outlaw.bounties.BountyPlugin;
+import com.outlaw.bounties.item.ConfiguredItem;
 import com.outlaw.bounties.model.ActiveBounty;
 import com.outlaw.bounties.model.Bounty;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -75,13 +75,29 @@ public class ActiveBountyManager {
         mob.setPersistent(true);
         mob.setCustomNameVisible(true);
         mob.setCustomName(ChatColor.YELLOW + b.display);
+        double targetHealth = b.health;
+        if (b.attributes.containsKey(Attribute.GENERIC_MAX_HEALTH)) {
+            targetHealth = b.attributes.get(Attribute.GENERIC_MAX_HEALTH);
+        }
         var attr = mob.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (attr != null) {
-            attr.setBaseValue(Math.max(1.0, b.health));
-            mob.setHealth(Math.max(1.0, b.health));
+            attr.setBaseValue(Math.max(1.0, targetHealth));
+            mob.setHealth(Math.max(1.0, targetHealth));
+        }
+        for (var entry : b.attributes.entrySet()) {
+            if (entry.getKey() == Attribute.GENERIC_MAX_HEALTH) continue;
+            var attribute = mob.getAttribute(entry.getKey());
+            if (attribute != null) {
+                attribute.setBaseValue(entry.getValue());
+            }
         }
         if (b.glowingSeconds > 0) {
             mob.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 20*b.glowingSeconds, 0, true, false, false));
+        }
+        if (!b.effects.isEmpty()) {
+            for (PotionEffect effect : b.effects) {
+                mob.addPotionEffect(effect);
+            }
         }
         equip(mob, b);
 
@@ -159,11 +175,12 @@ public class ActiveBountyManager {
     private void equip(LivingEntity mob, Bounty b) {
         var eq = mob.getEquipment();
         if (eq == null) return;
-        if (b.hand != null && !b.hand.equalsIgnoreCase("null")) eq.setItemInMainHand(new ItemStack(Material.matchMaterial(b.hand)));
-        if (b.head != null && !b.head.equalsIgnoreCase("null")) eq.setHelmet(new ItemStack(Material.matchMaterial(b.head)));
-        if (b.chest != null && !b.chest.equalsIgnoreCase("null")) eq.setChestplate(new ItemStack(Material.matchMaterial(b.chest)));
-        if (b.legs != null && !b.legs.equalsIgnoreCase("null")) eq.setLeggings(new ItemStack(Material.matchMaterial(b.legs)));
-        if (b.feet != null && !b.feet.equalsIgnoreCase("null")) eq.setBoots(new ItemStack(Material.matchMaterial(b.feet)));
+        if (b.hand != null) eq.setItemInMainHand(b.hand.createStack(1));
+        if (b.offHand != null) eq.setItemInOffHand(b.offHand.createStack(1));
+        if (b.head != null) eq.setHelmet(b.head.createStack(1));
+        if (b.chest != null) eq.setChestplate(b.chest.createStack(1));
+        if (b.legs != null) eq.setLeggings(b.legs.createStack(1));
+        if (b.feet != null) eq.setBoots(b.feet.createStack(1));
     }
 
     public void giveRewards(Player p) {
@@ -174,12 +191,25 @@ public class ActiveBountyManager {
         for (var r : bounty.rewards) {
             if (Math.random() <= r.chance) {
                 int amount = r.min + (int) Math.floor(Math.random() * (r.max - r.min + 1));
-                var m = Material.matchMaterial(r.item);
-                if (m == null) continue;
-                var stack = new ItemStack(m, Math.max(1, amount));
-                var rest = p.getInventory().addItem(stack);
-                if (!rest.isEmpty()) for (var leftover : rest.values()) p.getWorld().dropItemNaturally(p.getLocation(), leftover);
+                if (r.item == null) continue;
+                giveItemStack(p, r.item, amount);
             }
+        }
+    }
+
+    private void giveItemStack(Player player, ConfiguredItem item, int amount) {
+        if (amount <= 0) amount = item.baseAmount();
+        int maxPerStack = item.prototype().getMaxStackSize();
+        if (maxPerStack <= 0) maxPerStack = 64;
+        int remaining = Math.max(1, amount);
+        while (remaining > 0) {
+            int take = item.isStackable() ? Math.min(maxPerStack, remaining) : 1;
+            var stack = item.createStack(take);
+            var overflow = player.getInventory().addItem(stack);
+            if (!overflow.isEmpty()) {
+                overflow.values().forEach(leftover -> player.getWorld().dropItemNaturally(player.getLocation(), leftover));
+            }
+            remaining -= take;
         }
     }
 

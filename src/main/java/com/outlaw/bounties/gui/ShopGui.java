@@ -2,6 +2,7 @@ package com.outlaw.bounties.gui;
 
 import com.outlaw.bounties.BountyPlugin;
 import com.outlaw.bounties.model.ShopOffer;
+import com.outlaw.bounties.model.TierDefinition;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -53,7 +54,7 @@ public class ShopGui extends SimpleGui implements Listener {
         int slot = 10;
         for (ShopOffer offer : plugin.shopManager().all()) {
             order.add(offer.id);
-            ItemStack icon = new ItemStack(offer.icon != null ? offer.icon : Material.CHEST);
+            ItemStack icon = offer.icon != null ? offer.icon.createStack(1) : offer.reward.createStack(1);
             List<String> lore = new ArrayList<>();
             if (offer.description != null && !offer.description.isEmpty()) {
                 for (String line : offer.description.split("\\n")) {
@@ -61,13 +62,39 @@ public class ShopGui extends SimpleGui implements Listener {
                 }
                 lore.add("");
             }
+
+            if (offer.tierId != null) {
+                TierDefinition tier = plugin.bountyManager().getTier(offer.tierId);
+                if (tier != null) {
+                    String tierName = tier.displayName != null
+                            ? ChatColor.translateAlternateColorCodes('&', tier.displayName)
+                            : tier.id;
+                    lore.add(ChatColor.AQUA + plugin.locale().tr("gui.shop_tier", Map.of("tier", tierName)));
+                    if (tier.description != null && !tier.description.isEmpty()) {
+                        lore.add(ChatColor.DARK_AQUA + ChatColor.translateAlternateColorCodes('&', tier.description));
+                    }
+                    lore.add("");
+                }
+            }
+
             Map<String, String> costVars = new java.util.HashMap<>();
             costVars.put("cost", String.valueOf(offer.cost));
             lore.add(ChatColor.GOLD + plugin.locale().tr("gui.shop_cost", costVars));
+
             Map<String, String> rewardVars = new java.util.HashMap<>();
-            rewardVars.put("amount", String.valueOf(offer.rewardAmount));
-            rewardVars.put("item", formatMaterial(offer.rewardItem));
+            rewardVars.put("amount", String.valueOf(Math.max(1, offer.rewardAmount)));
+            rewardVars.put("item", ChatColor.stripColor(offer.reward.formattedName()));
             lore.add(ChatColor.YELLOW + plugin.locale().tr("gui.shop_reward", rewardVars));
+
+            ItemStack preview = offer.reward.createStack(Math.min(Math.max(1, offer.rewardAmount), offer.reward.prototype().getMaxStackSize()));
+            if (preview.hasItemMeta() && preview.getItemMeta().hasLore()) {
+                lore.add(" ");
+                lore.add(ChatColor.GRAY + plugin.locale().tr("gui.shop_reward_stats"));
+                for (String line : preview.getItemMeta().getLore()) {
+                    lore.add(ChatColor.DARK_GRAY + "• " + ChatColor.RESET + line);
+                }
+            }
+
             inv.setItem(slot, withMeta(icon, "§e" + offer.display, lore));
             slot++;
             if ((slot + 1) % 9 == 0) {
@@ -76,14 +103,6 @@ public class ShopGui extends SimpleGui implements Listener {
         }
 
         inv.setItem(49, withMeta(new ItemStack(Material.ARROW), "§7" + plugin.locale().tr("gui.back"), null));
-    }
-
-    private String formatMaterial(Material material) {
-        if (material == null) {
-            return "?";
-        }
-        String name = material.name().toLowerCase().replace('_', ' ');
-        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
 
     @EventHandler
@@ -129,11 +148,7 @@ public class ShopGui extends SimpleGui implements Listener {
             return;
         }
 
-        ItemStack reward = new ItemStack(offer.rewardItem != null ? offer.rewardItem : Material.STONE, offer.rewardAmount);
-        var overflow = p.getInventory().addItem(reward);
-        if (!overflow.isEmpty()) {
-            overflow.values().forEach(item -> p.getWorld().dropItemNaturally(p.getLocation(), item));
-        }
+        giveReward(p, offer);
 
         java.util.Map<String, String> purchaseVars = new java.util.HashMap<>();
         purchaseVars.put("name", offer.display);
@@ -147,4 +162,21 @@ public class ShopGui extends SimpleGui implements Listener {
 
         plugin.guiManager().openShop(p);
     }
+
+    private void giveReward(Player player, ShopOffer offer) {
+        int amount = Math.max(1, offer.rewardAmount);
+        int maxPerStack = offer.reward.prototype().getMaxStackSize();
+        if (maxPerStack <= 0) maxPerStack = 64;
+        int remaining = amount;
+        while (remaining > 0) {
+            int take = offer.reward.isStackable() ? Math.min(maxPerStack, remaining) : 1;
+            ItemStack stack = offer.reward.createStack(take);
+            Map<Integer, ItemStack> overflow = player.getInventory().addItem(stack);
+            if (!overflow.isEmpty()) {
+                overflow.values().forEach(leftover -> player.getWorld().dropItemNaturally(player.getLocation(), leftover));
+            }
+            remaining -= take;
+        }
+    }
 }
+

@@ -43,6 +43,10 @@ public class BountiesGui extends SimpleGui implements Listener {
                 }
                 l.add("");
             }
+            if (b.tierDisplay != null && !b.tierDisplay.isEmpty()) {
+                l.add(ChatColor.AQUA + plugin.locale().tr("gui.bounty_tier", java.util.Map.of("tier", b.tierDisplay)));
+                l.add("");
+            }
             l.add(ChatColor.GOLD + plugin.locale().tr("gui.bounty_points", java.util.Map.of(
                     "points", String.valueOf(Math.max(0, b.pointsReward))
             )));
