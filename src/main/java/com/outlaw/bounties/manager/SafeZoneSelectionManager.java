@@ -71,10 +71,11 @@ public class SafeZoneSelectionManager implements Listener {
         }
         SafeZoneManager.Zone zone = plugin.safeZoneManager().addPolygon(player.getWorld(), session.points);
         sessions.remove(player.getUniqueId());
-        player.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.safezone_created", Map.of(
-                "id", String.valueOf(zone.id),
+        player.sendMessage(ChatColor.GREEN + plugin.locale().tr(
+                "messages.safezone_created",
+                "id", zone.id,
                 "type", plugin.locale().tr("messages.safezone_type_circle")
-        )));
+        ));
         return true;
     }
 
@@ -125,10 +126,11 @@ public class SafeZoneSelectionManager implements Listener {
         }
         SafeZoneManager.Zone zone = plugin.safeZoneManager().addCuboid(player.getWorld(), first, pos);
         sessions.remove(player.getUniqueId());
-        player.sendMessage(ChatColor.GREEN + plugin.locale().tr("messages.safezone_created", Map.of(
-                "id", String.valueOf(zone.id),
+        player.sendMessage(ChatColor.GREEN + plugin.locale().tr(
+                "messages.safezone_created",
+                "id", zone.id,
                 "type", plugin.locale().tr("messages.safezone_type_square")
-        )));
+        ));
     }
 
     private void handlePolygon(Player player, SelectionSession session, SafeZoneManager.BlockPos pos) {
@@ -138,9 +140,7 @@ public class SafeZoneSelectionManager implements Listener {
         }
         session.points.add(pos);
         int count = session.points.size();
-        player.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.safezone_circle_progress", Map.of(
-                "count", String.valueOf(count)
-        )));
+        player.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.safezone_circle_progress", "count", count));
         if (count >= 5) {
             player.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.safezone_circle_ready"));
         }

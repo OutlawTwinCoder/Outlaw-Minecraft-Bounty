@@ -70,18 +70,18 @@ public class BountyCommand implements CommandExecutor {
                 if (args.length >= 2 && args[1].equalsIgnoreCase("list")) {
                     p.sendMessage(ChatColor.GOLD + plugin.locale().tr("messages.safezone_list_header"));
                     for (var z : plugin.safeZoneManager().all()) {
-                        var vars = java.util.Map.of(
-                                "id", String.valueOf(z.id),
+                        p.sendMessage(ChatColor.GRAY + plugin.locale().tr(
+                                "messages.safezone_list_item",
+                                "id", z.id,
                                 "type", zoneType(z),
                                 "info", describeZone(z)
-                        );
-                        p.sendMessage(ChatColor.GRAY + plugin.locale().tr("messages.safezone_list_item", vars));
+                        ));
                     }
                 } else if (args.length >= 3 && args[1].equalsIgnoreCase("remove")) {
                     try {
                         int id = Integer.parseInt(args[2]);
                         boolean ok = plugin.safeZoneManager().remove(id);
-                        if (ok) p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.safezone_removed", java.util.Map.of("id", String.valueOf(id))));
+                        if (ok) p.sendMessage(ChatColor.YELLOW + plugin.locale().tr("messages.safezone_removed", "id", id));
                         else p.sendMessage(ChatColor.RED + "ID invalide.");
                     } catch (Exception ex) {
                         p.sendMessage(ChatColor.RED + "Usage: /bounty safezone remove <id>");

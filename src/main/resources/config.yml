@@ -15,139 +15,516 @@ menu:
   title_bounties: "&8Choisir un Bounty"
   title_loot: "&8Récompenses"
   title_shop: "&8Boutique Bounty"
+tiers:
+  tier1:
+    display: "&aTier I · Recrue"
+    description: "&7Contrats idéals pour se mettre en jambes."
+    level: 1
+    icon: IRON_SWORD
+  tier2:
+    display: "&2Tier II · Traqueur"
+    description: "&7Des proies plus rapides et mieux armées."
+    level: 2
+    icon: DIAMOND_SWORD
+  tier3:
+    display: "&3Tier III · Prédateur"
+    description: "&7Les bêtes frappent fort et encaissent les coups."
+    level: 3
+    icon: NETHERITE_SWORD
+  tier4:
+    display: "&5Tier IV · Légende"
+    description: "&7Affronte des élites redoutées des chasseurs."
+    level: 4
+    icon: NETHERITE_AXE
+  tier5:
+    display: "&cTier V · Mythique"
+    description: "&7Les trophées ultimes des Bounty Hunters."
+    level: 5
+    icon: NETHER_STAR
 bounties:
-  zombie_easy:
-    display: "Zombie Facile"
-    description: "Échauffement contre un zombie un peu plus costaud."
-    entity: ZOMBIE
-    health: 40.0
-    glowing_seconds: 12
-    points_reward: 1
-    equipment:
-      hand: IRON_SWORD
-      head: null
-      chest: null
-      legs: null
-      feet: null
-    rewards:
-      - item: IRON_INGOT
-        min: 3
-        max: 7
-        chance: 1.0
-      - item: GOLD_INGOT
-        min: 1
-        max: 4
-        chance: 0.6
-  skeleton_hunter:
-    display: "Squelette Chasseur"
-    description: "Reste en mouvement!"
-    entity: SKELETON
-    health: 30.0
-    glowing_seconds: 10
-    points_reward: 2
-    equipment:
-      hand: BOW
-      head: LEATHER_HELMET
-      chest: LEATHER_CHESTPLATE
-      legs: LEATHER_LEGGINGS
-      feet: LEATHER_BOOTS
-    rewards:
-      - item: BONE
-        min: 4
-        max: 10
-        chance: 1.0
-      - item: ARROW
-        min: 16
-        max: 32
-        chance: 0.9
-  enderman_test:
-    display: "Enderman Test"
-    description: "Ne le regarde pas dans les yeux..."
-    entity: ENDERMAN
-    health: 40.0
-    glowing_seconds: 8
-    points_reward: 3
-    equipment: {}
-    rewards:
-      - item: ENDER_PEARL
-        min: 2
-        max: 5
-        chance: 0.8
-  witch_curse:
-    display: "Sorcière Maudite"
-    description: "Attention à ses potions explosives."
-    entity: WITCH
-    health: 32.0
-    glowing_seconds: 10
-    points_reward: 2
-    equipment: {}
-    rewards:
-      - item: GLOWSTONE_DUST
-        min: 4
-        max: 8
-        chance: 0.9
-      - item: REDSTONE
-        min: 6
-        max: 12
-        chance: 0.7
-  pillager_captain:
-    display: "Chef Pillard"
-    description: "Un capitaine bien armé accompagné de son arbalète."
-    entity: PILLAGER
-    health: 45.0
-    glowing_seconds: 12
-    points_reward: 3
-    equipment:
-      hand: CROSSBOW
-      head: IRON_HELMET
-      chest: CHAINMAIL_CHESTPLATE
-      legs: CHAINMAIL_LEGGINGS
-      feet: CHAINMAIL_BOOTS
-    rewards:
-      - item: EMERALD
-        min: 2
-        max: 6
-        chance: 0.85
-      - item: CROSSBOW
-        min: 1
-        max: 1
-        chance: 0.25
-  blaze_overlord:
-    display: "Blaze Suprême"
-    description: "La chaleur augmente à chaque seconde!"
-    entity: BLAZE
-    health: 36.0
-    glowing_seconds: 8
-    points_reward: 4
-    equipment: {}
-    rewards:
-      - item: BLAZE_ROD
-        min: 2
-        max: 5
-        chance: 0.9
-      - item: MAGMA_CREAM
-        min: 1
-        max: 3
-        chance: 0.6
+  tier1:
+    zombie_recruit:
+      display: "Zombie Recrue"
+      description: "Échauffement idéal pour les nouveaux chasseurs."
+      entity: ZOMBIE
+      health: 30.0
+      glowing_seconds: 12
+      points_reward: 1
+      equipment:
+        hand:
+          material: IRON_SWORD
+        head: LEATHER_HELMET
+      effects:
+        - type: SPEED
+          duration_ticks: 400
+          amplifier: 0
+      rewards:
+        - item: IRON_INGOT
+          min: 4
+          max: 8
+          chance: 1.0
+        - item:
+            material: LEATHER_BOOTS
+            name: "&aBottes d'Éclaireur"
+            lore:
+              - "&7Un bonus léger pour filer plus vite."
+              - "&8AuraSkill: +2 Vitesse"
+            enchants:
+              feather_falling: 2
+            auraskill:
+              speed: 2
+          min: 1
+          max: 1
+          chance: 0.25
+    skeleton_trapper:
+      display: "Squelette Trappeur"
+      description: "Un archer agile qui aime garder ses distances."
+      entity: STRAY
+      health: 32.0
+      glowing_seconds: 10
+      points_reward: 2
+      equipment:
+        hand:
+          material: BOW
+          enchants:
+            power: 2
+            flame: 1
+        head: CHAINMAIL_HELMET
+      effects:
+        - type: SPEED
+          duration_ticks: 600
+          amplifier: 1
+      rewards:
+        - item: ARROW
+          min: 24
+          max: 48
+          chance: 1.0
+        - item:
+            material: TIPPED_ARROW
+            name: "&bFlèches de Glace"
+            lore:
+              - "&7Inflige un ralentissement glacial."
+            potion_effects:
+              - type: SLOW
+                duration_ticks: 200
+                amplifier: 1
+          min: 8
+          max: 16
+          chance: 0.5
+  tier2:
+    pillager_vanguard:
+      display: "Avant-garde Pillarde"
+      description: "Armé jusqu'aux dents avec une arbalète explosive."
+      entity: PILLAGER
+      health: 45.0
+      glowing_seconds: 12
+      points_reward: 3
+      tier: tier2
+      attributes:
+        GENERIC_ATTACK_DAMAGE: 8.0
+      equipment:
+        hand:
+          material: CROSSBOW
+          enchants:
+            multishot: 1
+            quick_charge: 2
+        chest: CHAINMAIL_CHESTPLATE
+        legs: CHAINMAIL_LEGGINGS
+        feet: IRON_BOOTS
+      rewards:
+        - item: EMERALD
+          min: 3
+          max: 6
+          chance: 0.9
+        - item:
+            material: FIREWORK_ROCKET
+            name: "&6Fusées Percutantes"
+            lore:
+              - "&7Munition explosive pour arbalète."
+            amount: 6
+          min: 1
+          max: 1
+          chance: 0.6
+    witch_matriarch:
+      display: "Matriarche Sorcière"
+      description: "Maîtresse des potions toxiques et régénérantes."
+      entity: WITCH
+      health: 48.0
+      glowing_seconds: 10
+      points_reward: 3
+      tier: tier2
+      effects:
+        - type: DAMAGE_RESISTANCE
+          duration_ticks: 600
+          amplifier: 1
+        - type: REGENERATION
+          duration_ticks: 600
+          amplifier: 0
+      rewards:
+        - item: GLOWSTONE_DUST
+          min: 6
+          max: 12
+          chance: 1.0
+        - item: REDSTONE
+          min: 8
+          max: 16
+          chance: 0.8
+        - item:
+            material: SPLASH_POTION
+            name: "&5Potion Instable"
+            lore:
+              - "&dEffets doubles: soin & poison."
+            potion_effects:
+              - type: POISON
+                duration_ticks: 120
+                amplifier: 1
+              - type: REGENERATION
+                duration_ticks: 100
+                amplifier: 0
+          min: 1
+          max: 1
+          chance: 0.35
+  tier3:
+    ender_assassin:
+      display: "Assassin de l'End"
+      description: "Se téléporte derrière toi et frappe sans prévenir."
+      entity: ENDERMAN
+      health: 60.0
+      glowing_seconds: 8
+      points_reward: 4
+      tier: tier3
+      attributes:
+        GENERIC_ATTACK_DAMAGE: 11.0
+        GENERIC_MOVEMENT_SPEED: 0.35
+      effects:
+        - type: SPEED
+          duration_ticks: 600
+          amplifier: 2
+      rewards:
+        - item: ENDER_PEARL
+          min: 3
+          max: 6
+          chance: 0.9
+        - item:
+            material: ENDER_EYE
+            name: "&dFragment de Voile"
+            lore:
+              - "&7Utilisé pour fabriquer des téléporteurs."
+          min: 1
+          max: 2
+          chance: 0.5
+        - item:
+            material: NETHERITE_SCRAP
+            name: "&5Éclat Ombreflux"
+            lore:
+              - "&7Ressource rare infusée d'énergie d'End."
+          min: 1
+          max: 1
+          chance: 0.2
+    guardian_titan:
+      display: "Titan Gardien"
+      description: "Un protecteur océanique aux épines meurtrières."
+      entity: ELDER_GUARDIAN
+      health: 85.0
+      glowing_seconds: 10
+      points_reward: 5
+      tier: tier3
+      attributes:
+        GENERIC_ATTACK_DAMAGE: 12.0
+      rewards:
+        - item: PRISMARINE_CRYSTALS
+          min: 6
+          max: 12
+          chance: 1.0
+        - item: SPONGE
+          min: 1
+          max: 2
+          chance: 0.6
+        - item:
+            material: TRIDENT
+            name: "&3Trident du Titan"
+            lore:
+              - "&7Parfait pour combattre sous l'eau."
+              - "&8AuraSkill: +4 Puissance aquatique"
+            enchants:
+              impaling: 4
+              loyalty: 2
+            auraskill:
+              water_power: 4
+          min: 1
+          max: 1
+          chance: 0.25
+  tier4:
+    wither_knight:
+      display: "Chevalier Wither"
+      description: "Brandit une lame nécrotique à deux mains."
+      entity: WITHER_SKELETON
+      health: 110.0
+      glowing_seconds: 8
+      points_reward: 6
+      tier: tier4
+      attributes:
+        GENERIC_ATTACK_DAMAGE: 15.0
+        GENERIC_ARMOR: 6.0
+      equipment:
+        hand:
+          material: NETHERITE_SWORD
+          enchants:
+            sharpness: 4
+            unbreaking: 3
+        chest: NETHERITE_CHESTPLATE
+        legs: NETHERITE_LEGGINGS
+      effects:
+        - type: INCREASE_DAMAGE
+          duration_ticks: 400
+          amplifier: 1
+      rewards:
+        - item: COAL
+          min: 8
+          max: 16
+          chance: 1.0
+        - item: WITHER_SKELETON_SKULL
+          min: 1
+          max: 1
+          chance: 0.3
+        - item:
+            material: NETHERITE_INGOT
+            name: "&8Lingot Ombreforgé"
+            lore:
+              - "&7Renforcé par l'énergie du Wither."
+          min: 1
+          max: 1
+          chance: 0.2
+    ravager_warlord:
+      display: "Seigneur Ravageur"
+      description: "Charge sans relâche avec une force colossale."
+      entity: RAVAGER
+      health: 140.0
+      glowing_seconds: 12
+      points_reward: 7
+      tier: tier4
+      attributes:
+        GENERIC_ATTACK_DAMAGE: 18.0
+        GENERIC_ARMOR_TOUGHNESS: 6.0
+      rewards:
+        - item: SADDLE
+          min: 1
+          max: 1
+          chance: 0.8
+        - item:
+            material: SHULKER_SHELL
+            name: "&5Cuirasse de Ravage"
+            lore:
+              - "&7Composant rare pour armures portables."
+          min: 1
+          max: 2
+          chance: 0.5
+        - item:
+            material: NETHERITE_HORSE_ARMOR
+            name: "&6Armure de Monture Légendaire"
+            lore:
+              - "&7Protège votre destrier sur le champ de bataille."
+          min: 1
+          max: 1
+          chance: 0.15
+  tier5:
+    warden_echo:
+      display: "Écho du Gardien"
+      description: "Canalise les vibrations pour tout désintégrer."
+      entity: WARDEN
+      health: 200.0
+      glowing_seconds: 6
+      points_reward: 10
+      tier: tier5
+      attributes:
+        GENERIC_ATTACK_DAMAGE: 30.0
+        GENERIC_ARMOR: 10.0
+        GENERIC_KNOCKBACK_RESISTANCE: 1.0
+      effects:
+        - type: RESISTANCE
+          duration_ticks: 600
+          amplifier: 3
+      rewards:
+        - item: SCULK_CATALYST
+          min: 1
+          max: 2
+          chance: 0.9
+        - item:
+            material: SCULK_SENSOR
+            name: "&9Coeur Vibrant"
+            lore:
+              - "&7Permet de détecter les vibrations à longue portée."
+          min: 1
+          max: 1
+          chance: 0.6
+        - item:
+            material: NETHERITE_CHESTPLATE
+            name: "&9Plastron du Gardien"
+            lore:
+              - "&7Réduit lourdement les dégâts soniques."
+              - "&8AuraSkill: +6 Défense"
+            enchants:
+              protection: 5
+              blast_protection: 4
+            auraskill:
+              defense: 6
+          min: 1
+          max: 1
+          chance: 0.18
+    dragon_shade:
+      display: "Ombre du Dragon"
+      description: "Reste dans les airs en déchaînant le souffle draconique."
+      entity: PHANTOM
+      health: 120.0
+      glowing_seconds: 10
+      points_reward: 9
+      tier: tier5
+      attributes:
+        GENERIC_ATTACK_DAMAGE: 16.0
+        GENERIC_MOVEMENT_SPEED: 0.5
+      effects:
+        - type: FIRE_RESISTANCE
+          duration_ticks: 600
+          amplifier: 0
+      rewards:
+        - item: ELYTRA
+          min: 1
+          max: 1
+          chance: 0.2
+        - item:
+            material: DRAGON_BREATH
+            name: "&5Souffle Condensé"
+            lore:
+              - "&7Essence pure pour concocter des mixtures."
+          min: 2
+          max: 4
+          chance: 0.8
+        - item:
+            material: PHANTOM_MEMBRANE
+            name: "&dVoile Spectral"
+            lore:
+              - "&7Répare les élytres et améliore vos capes."
+          min: 3
+          max: 6
+          chance: 0.9
 shop:
+  tier1_blade:
+    display: "Lame de Recrue"
+    description: "Une arme légère qui augmente légèrement tes dégâts."
+    cost: 6
+    tier: tier1
+    reward:
+      material: IRON_SWORD
+      name: "&aLame de Recrue"
+      lore:
+        - "&7Bonus AuraSkill: +3 Dégâts"
+        - "&7Idéal pour les premiers contrats."
+      enchants:
+        sharpness: 2
+        unbreaking: 2
+      attributes:
+        - attribute: GENERIC_ATTACK_DAMAGE
+          amount: 3.0
+          operation: ADD_NUMBER
+          slot: HAND
+      auraskill:
+        damage: 3
+  tier2_mail:
+    display: "Harnois du Traqueur"
+    description: "Un plastron résistant infusé d'énergie de chasse."
+    cost: 14
+    tier: tier2
+    reward:
+      material: DIAMOND_CHESTPLATE
+      name: "&2Plastron du Traqueur"
+      lore:
+        - "&7AuraSkill: +4 Défense"
+        - "&7Réduit légèrement les dégâts à distance."
+      enchants:
+        protection: 4
+        projectile_protection: 3
+      auraskill:
+        defense: 4
+  tier3_bow:
+    display: "Arc du Prédateur"
+    description: "Arc composite qui renforce ta précision."
+    cost: 18
+    tier: tier3
+    reward:
+      material: BOW
+      name: "&3Arc du Prédateur"
+      lore:
+        - "&7AuraSkill: +5 Adresse"
+        - "&7Charge rapide et frappe critique."
+      enchants:
+        power: 4
+        unbreaking: 3
+        infinity: 1
+      auraskill:
+        precision: 5
+  tier4_axe:
+    display: "Hache de Légende"
+    description: "Chaque coup déclenche une onde de choc."
+    cost: 26
+    tier: tier4
+    reward:
+      material: NETHERITE_AXE
+      name: "&5Hache de Légende"
+      lore:
+        - "&7AuraSkill: +6 Brutalité"
+        - "&7Idéal pour briser les armures ennemies."
+      enchants:
+        sharpness: 5
+        efficiency: 5
+      attributes:
+        - attribute: GENERIC_ATTACK_DAMAGE
+          amount: 6.0
+          operation: ADD_NUMBER
+          slot: HAND
+      auraskill:
+        brutality: 6
+  tier5_relic:
+    display: "Relique Mythique"
+    description: "Artefact rare infusé d'énergie draconique."
+    cost: 40
+    tier: tier5
+    reward:
+      material: NETHERITE_HELMET
+      name: "&cHeaume de l'Ombre"
+      lore:
+        - "&7AuraSkill: +8 Résilience"
+        - "&7Confère une résistance au souffle draconique."
+      enchants:
+        protection: 5
+        respiration: 3
+      attributes:
+        - attribute: GENERIC_ARMOR_TOUGHNESS
+          amount: 4.0
+          operation: ADD_NUMBER
+          slot: HEAD
+        - attribute: GENERIC_MAX_HEALTH
+          amount: 6.0
+          operation: ADD_NUMBER
+          slot: HEAD
+      auraskill:
+        resilience: 8
   golden_apples:
     display: "Pommes Dorées"
     description: "Un petit coup de pouce pour survivre aux contrats."
-    icon: GOLDEN_APPLE
     cost: 4
-    item: GOLDEN_APPLE
-    amount: 3
+    reward:
+      material: GOLDEN_APPLE
+      amount: 3
   arrow_crate:
     display: "Caisse de Flèches"
     description: "Parfaite pour les chasseurs à distance."
-    icon: ARROW
     cost: 2
-    item: ARROW
-    amount: 48
+    reward:
+      material: ARROW
+      amount: 48
   totem_bundle:
     display: "Totem de Sauvegarde"
     description: "Une seconde chance quand tout va mal."
-    icon: TOTEM_OF_UNDYING
     cost: 15
-    item: TOTEM_OF_UNDYING
-    amount: 1
+    reward:
+      material: TOTEM_OF_UNDYING
